@@ -1,0 +1,13 @@
+<section class="section page-width contact-page">
+  <div class="contact-intro"><p class="eyebrow">{{ section.settings.eyebrow }}</p><h1>{{ page.title | default: section.settings.heading }}</h1><div class="rte">{{ page.content }}</div></div>
+  {% form 'contact', class: 'contact-form' %}
+    {% if form.posted_successfully? %}<p class="form-success">Thanks for reaching out. Our team will get back to you shortly.</p>{% endif %}
+    {{ form.errors | default_errors }}
+    <div class="contact-form-grid"><label>First name<input type="text" name="contact[first_name]" required></label><label>Email<input type="email" name="contact[email]" required></label></div>
+    <label>Subject<input type="text" name="contact[subject]"></label><label>Message<textarea name="contact[body]" rows="7" required></textarea></label>
+    <button class="button" type="submit">{{ section.settings.button_label }}</button>
+  {% endform %}
+</section>
+{% schema %}
+{"name":"Contact page","settings":[{"type":"text","id":"eyebrow","label":"Eyebrow","default":"WE'RE HERE TO HELP"},{"type":"text","id":"heading","label":"Heading","default":"Contact Kapisa"},{"type":"text","id":"button_label","label":"Button label","default":"Send message"}],"presets":[{"name":"Contact page"}]}
+{% endschema %}

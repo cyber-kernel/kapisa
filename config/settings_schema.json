@@ -1,0 +1,41 @@
+[
+  {
+    "name":"theme_info",
+    "theme_name":"Kapisa",
+    "theme_version":"1.0.0",
+    "theme_author":"Kapisa",
+    "theme_documentation_url":"https://help.shopify.com/en/manual/online-store/themes",
+    "theme_support_url":"https://help.shopify.com/en/manual/online-store/themes"
+  },
+  {
+    "name":"Brand",
+    "settings":[
+      {"type":"image_picker","id":"logo","label":"Logo"},
+      {"type":"image_picker","id":"favicon","label":"Favicon"},
+      {"type":"range","id":"logo_width","label":"Logo width","min":60,"max":240,"step":5,"unit":"px","default":120}
+    ]
+  },
+  {
+    "name":"Colors",
+    "settings":[
+      {"type":"color","id":"color_background","label":"Background","default":"#F8F7F4"},
+      {"type":"color","id":"color_surface","label":"Surface","default":"#FFFFFF"},
+      {"type":"color","id":"color_text","label":"Text","default":"#171A18"},
+      {"type":"color","id":"color_muted","label":"Muted text","default":"#686C68"},
+      {"type":"color","id":"color_accent","label":"Accent","default":"#6E746A"},
+      {"type":"color","id":"color_border","label":"Borders","default":"#E4E3DE"},
+      {"type":"color","id":"color_button","label":"Button","default":"#171A18"},
+      {"type":"color","id":"color_button_text","label":"Button text","default":"#FFFFFF"}
+    ]
+  },
+  {
+    "name":"Layout",
+    "settings":[
+      {"type":"range","id":"page_width","label":"Page width","min":1000,"max":1600,"step":20,"unit":"px","default":1320},
+      {"type":"range","id":"card_radius","label":"Card radius","min":0,"max":28,"step":1,"unit":"px","default":4},
+      {"type":"range","id":"heading_scale","label":"Heading scale","min":80,"max":130,"step":5,"unit":"%","default":100},
+      {"type":"checkbox","id":"enable_animations","label":"Enable animations","default":true},
+      {"type":"checkbox","id":"enable_predictive_search","label":"Enable predictive search","default":true}
+    ]
+  }
+]

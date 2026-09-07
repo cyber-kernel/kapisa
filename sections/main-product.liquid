@@ -1,0 +1,30 @@
+<section class="section page-width product-page">
+  <div class="product-gallery">
+    <div class="product-media-grid">{% for media in product.media %}<div class="product-media">{% case media.media_type %}{% when 'image' %}{{ media | image_url: width:1600 | image_tag: widths:'600,900,1200,1600', sizes:'(min-width:990px) 50vw, 100vw', loading:'lazy', alt:media.alt | default:product.title }}{% when 'video' %}{{ media | video_tag: controls:true, playsinline:true }}{% when 'external_video' %}{{ media | external_video_tag }}{% endcase %}</div>{% endfor %}</div>
+  </div>
+  <div class="product-info">
+    {% if section.settings.show_vendor %}<p class="eyebrow">{{ product.vendor }}</p>{% endif %}
+    <h1>{{ product.title }}</h1>
+    <div class="product-info-price">{% render 'price', product:product %}</div>
+    {% if section.settings.show_description %}<div class="product-description rte">{{ product.description }}</div>{% endif %}
+    {% form 'product', product, id: 'product-form', class: 'product-form', novalidate: true %}
+      {% unless product.has_only_default_variant %}
+        {% for option in product.options_with_values %}
+          <fieldset class="product-option"><legend>{{ option.name }}</legend><div class="variant-values">{% for value in option.values %}<label><input type="radio" name="options[{{ option.name | escape }}]" value="{{ value | escape }}" {% if option.selected_value == value %}checked{% endif %}><span>{{ value }}</span></label>{% endfor %}</div></fieldset>
+        {% endfor %}
+      {% endunless %}
+      <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}"><script type="application/json" data-variant-json>{{ product.variants | json }}</script>
+      <label class="quantity-label" for="Quantity-{{ section.id }}">Quantity</label><div class="quantity"><button type="button" data-qty-minus>−</button><input id="Quantity-{{ section.id }}" name="quantity" type="number" value="1" min="1"><button type="button" data-qty-plus>+</button></div>
+      <button type="submit" name="add" class="button product-submit" {% unless product.selected_or_first_available_variant.available %}disabled{% endunless %}>{% if product.selected_or_first_available_variant.available %}Add to cart{% else %}Sold out{% endif %}</button>
+      {{ form | payment_button }}
+      <div class="product-form-message" data-product-form-message></div>
+    {% endform %}
+    <div class="accordion-list">
+      {% if section.settings.shipping_text != blank %}<details><summary>Shipping & returns</summary><div class="rte">{{ section.settings.shipping_text }}</div></details>{% endif %}
+      {% if section.settings.care_text != blank %}<details><summary>Care</summary><div class="rte">{{ section.settings.care_text }}</div></details>{% endif %}
+    </div>
+  </div>
+</section>
+{% schema %}
+{"name":"Main product","settings":[{"type":"checkbox","id":"show_vendor","label":"Show vendor","default":false},{"type":"checkbox","id":"show_description","label":"Show description","default":true},{"type":"richtext","id":"shipping_text","label":"Shipping text","default":"<p>Add your current shipping and return information here.</p>"},{"type":"richtext","id":"care_text","label":"Care text","default":"<p>Add your product care instructions here.</p>"}],"presets":[{"name":"Main product"}]}
+{% endschema %}

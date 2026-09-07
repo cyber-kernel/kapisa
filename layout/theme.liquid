@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="{{ request.locale.iso_code }}">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="theme-color" content="{{ settings.color_background }}">
+    <link rel="canonical" href="{{ canonical_url }}">
+    {% if settings.favicon != blank %}<link rel="icon" href="{{ settings.favicon | image_url: width: 32 }}" type="image/png">{% endif %}
+    <title>{{ page_title }}{% unless page_title contains shop.name %} — {{ shop.name }}{% endunless %}</title>
+    {% if page_description %}<meta name="description" content="{{ page_description | escape }}">{% endif %}
+    {{ content_for_header }}
+    {{ 'kapisa.css' | asset_url | stylesheet_tag }}
+    <style>
+      :root {
+        --kapisa-bg: {{ settings.color_background }};
+        --kapisa-surface: {{ settings.color_surface }};
+        --kapisa-text: {{ settings.color_text }};
+        --kapisa-muted: {{ settings.color_muted }};
+        --kapisa-accent: {{ settings.color_accent }};
+        --kapisa-border: {{ settings.color_border }};
+        --kapisa-button: {{ settings.color_button }};
+        --kapisa-button-text: {{ settings.color_button_text }};
+        --kapisa-radius: {{ settings.card_radius }}px;
+        --kapisa-max: {{ settings.page_width }}px;
+        --kapisa-heading-scale: {{ settings.heading_scale | divided_by: 100.0 }};
+      }
+    </style>
+  </head>
+  <body class="gradient">
+    <a class="skip-link" href="#MainContent">Skip to content</a>
+    {% sections 'header-group' %}
+    <main id="MainContent" role="main" tabindex="-1">{{ content_for_layout }}</main>
+    {% sections 'footer-group' %}
+    {% render 'cart-drawer' %}
+    <script src="{{ 'kapisa.js' | asset_url }}" defer></script>
+    {% if settings.enable_predictive_search %}
+      <script src="{{ 'predictive-search.js' | asset_url }}" defer></script>
+    {% endif %}
+  </body>
+</html>

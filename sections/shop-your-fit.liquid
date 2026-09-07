@@ -1,0 +1,19 @@
+<section class="section page-width">
+  <div class="section-heading{% if section.settings.center_heading %} text-center{% endif %}">
+    {% if section.settings.eyebrow != blank %}<p class="eyebrow">{{ section.settings.eyebrow }}</p>{% endif %}
+    <h2>{{ section.settings.heading }}</h2>
+    {% if section.settings.text != blank %}<div class="section-intro rte">{{ section.settings.text }}</div>{% endif %}
+  </div>
+  <div class="fit-grid">
+    {% for block in section.blocks %}
+      <a class="fit-card" href="{{ block.settings.link }}" {{ block.shopify_attributes }}>
+        {% if block.settings.image != blank %}{{ block.settings.image | image_url: width:1200 | image_tag: widths:'500,800,1200', sizes:'(min-width:990px) 50vw, 100vw', loading:'lazy', alt:block.settings.image.alt | default:block.settings.title }}{% else %}<div class="media-placeholder"></div>{% endif %}
+        <div class="fit-overlay"></div>
+        <div class="fit-copy"><p class="eyebrow">{{ block.settings.eyebrow }}</p><h3>{{ block.settings.title }}</h3><span>{{ block.settings.button_label }} {% render 'icon', name:'arrow' %}</span></div>
+      </a>
+    {% endfor %}
+  </div>
+</section>
+{% schema %}
+{"name":"Shop your fit","settings":[{"type":"text","id":"eyebrow","label":"Eyebrow","default":"SHOP YOUR FIT"},{"type":"text","id":"heading","label":"Heading","default":"Find your everyday uniform."},{"type":"richtext","id":"text","label":"Text"},{"type":"checkbox","id":"center_heading","label":"Center heading","default":true}],"blocks":[{"type":"category","name":"Category","settings":[{"type":"image_picker","id":"image","label":"Image"},{"type":"text","id":"eyebrow","label":"Eyebrow"},{"type":"text","id":"title","label":"Title","default":"Men"},{"type":"text","id":"button_label","label":"Button","default":"Shop now"},{"type":"url","id":"link","label":"Link"}]}],"max_blocks":2,"presets":[{"name":"Shop your fit","blocks":[{"type":"category","settings":{"title":"Men","button_label":"Shop men"}},{"type":"category","settings":{"title":"Women","button_label":"Shop women"}}]}]}
+{% endschema %}

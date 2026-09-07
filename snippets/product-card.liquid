@@ -1,0 +1,21 @@
+{% assign p = product %}
+<article class="product-card" data-product-card>
+  <a href="{{ p.url }}" class="product-card-media" aria-label="{{ p.title | escape }}">
+    {% if p.featured_media %}
+      {{ p.featured_media.preview_image | image_url: width: 900 | image_tag: widths:'360,540,720,900', sizes:'(min-width: 990px) 25vw, 50vw', loading:'lazy', alt:p.featured_media.alt | default:p.title }}
+      {% if p.media.size > 1 %}{{ p.media[1].preview_image | image_url: width:900 | image_tag: widths:'360,540,720,900', sizes:'(min-width: 990px) 25vw, 50vw', loading:'lazy', class:'product-card-secondary', alt:p.media[1].alt | default:p.title }}{% endif %}
+    {% else %}<div class="media-placeholder"></div>{% endif %}
+    {% if p.available == false %}<span class="product-badge">Sold out</span>{% elsif p.compare_at_price > p.price %}<span class="product-badge">Sale</span>{% endif %}
+  </a>
+  <div class="product-card-info">
+    <div class="product-card-title-row">
+      <a href="{{ p.url }}" class="product-card-title">{{ p.title }}</a>
+      {% if p.available %}<button type="button" class="quick-add" data-quick-add data-product-handle="{{ p.handle }}" aria-label="Quick add {{ p.title }}">+</button>{% endif %}
+    </div>
+    {% render 'price', product:p %}
+    {% if show_swatches and p.options_with_values != blank %}
+      {% assign color_index = -1 %}{% for option in p.options_with_values %}{% assign down = option.name | downcase %}{% if down == 'color' or down == 'colour' %}{% assign color_index = forloop.index0 %}{% endif %}{% endfor %}
+      {% if color_index > -1 %}<div class="swatches" aria-label="Available colors">{% for value in p.options_with_values[color_index].values limit:8 %}<span class="swatch" title="{{ value }}" data-color="{{ value | handleize }}"></span>{% endfor %}</div>{% endif %}
+    {% endif %}
+  </div>
+</article>

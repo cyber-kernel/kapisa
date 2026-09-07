@@ -1,0 +1,93 @@
+<header class="site-header" data-header>
+  <div class="page-width header-inner">
+    <button class="header-icon mobile-only" type="button" aria-label="Open menu" aria-controls="MobileMenu" aria-expanded="false" data-menu-toggle>{% render 'icon', name:'menu' %}</button>
+    <a class="brand" href="{{ routes.root_url }}" aria-label="{{ shop.name }}">
+      {% if settings.logo != blank %}{{ settings.logo | image_url: width: settings.logo_width | image_tag: widths: '80,120,160,200,240', class:'brand-logo', alt: shop.name, loading:'eager' }}{% else %}<span class="brand-wordmark">{{ shop.name | default:'KAPISA' }}</span>{% endif %}
+    </a>
+    <nav class="desktop-nav" aria-label="Primary">
+      {% assign menu = section.settings.menu %}
+      {% if menu == blank %}{% assign menu = linklists.main-menu %}{% endif %}
+      {% if menu != blank %}
+        <ul class="nav-list">
+          {% for link in menu.links %}
+            <li class="nav-item{% if link.links != blank %} has-mega{% endif %}">
+              <a href="{{ link.url }}" class="nav-link">{{ link.title }}</a>
+              {% if link.links != blank %}
+                {% if section.settings.menu_style == 'mega' %}
+                <div class="mega-menu" role="region">
+                  <div class="page-width mega-grid">
+                    <div class="mega-links">
+                      {% for child in link.links %}
+                        <div class="mega-column">
+                          <a class="mega-heading" href="{{ child.url }}">{{ child.title }}</a>
+                          {% if child.links != blank %}
+                            <ul>{% for grand in child.links %}<li><a href="{{ grand.url }}">{{ grand.title }}</a></li>{% endfor %}</ul>
+                          {% endif %}
+                        </div>
+                      {% endfor %}
+                    </div>
+                    {% if section.blocks.size > 0 %}
+                      <div class="mega-collection-features">
+                        {% for block in section.blocks %}
+                          {% if block.type == 'collection_feature' and block.settings.collection != blank %}
+                            {% assign featured_collection = block.settings.collection %}
+                            <a class="mega-collection-card" href="{{ featured_collection.url }}" {{ block.shopify_attributes }}>
+                              {% if block.settings.image != blank %}
+                                {{ block.settings.image | image_url: width: 700 | image_tag: loading: 'lazy', widths: '300,500,700', alt: block.settings.title | default: featured_collection.title }}
+                              {% elsif featured_collection.featured_image != blank %}
+                                {{ featured_collection.featured_image | image_url: width: 700 | image_tag: loading: 'lazy', widths: '300,500,700', alt: featured_collection.title }}
+                              {% endif %}
+                              <span>{{ block.settings.title | default: featured_collection.title }}</span>
+                            </a>
+                          {% endif %}
+                        {% endfor %}
+                      </div>
+                    {% endif %}
+                    {% if section.settings.mega_image != blank %}
+                      <a class="mega-feature" href="{{ section.settings.mega_link | default: link.url }}">
+                        {{ section.settings.mega_image | image_url: width: 900 | image_tag: loading:'lazy', widths:'400,600,900', alt: section.settings.mega_alt }}
+                        <span>{{ section.settings.mega_text }}</span>
+                      </a>
+                    {% endif %}
+                  </div>
+                </div>
+                {% else %}
+                  <div class="normal-submenu">
+                    {% for child in link.links %}
+                      <a href="{{ child.url }}">{{ child.title }}</a>
+                      {% for grand in child.links %}<a class="normal-submenu-indent" href="{{ grand.url }}">{{ grand.title }}</a>{% endfor %}
+                    {% endfor %}
+                  </div>
+                {% endif %}
+              {% endif %}
+            </li>
+          {% endfor %}
+        </ul>
+      {% endif %}
+    </nav>
+    <div class="header-actions">
+      <a class="header-icon" href="{{ routes.search_url }}" aria-label="Search">{% render 'icon', name:'search' %}</a>
+      {% if shop.customer_accounts_enabled %}<a class="header-icon desktop-only" href="{{ routes.account_url }}" aria-label="Account">{% render 'icon', name:'account' %}</a>{% endif %}
+      <a class="header-icon" href="{{ routes.cart_url }}" aria-label="Cart">{% render 'icon', name:'bag' %}<span class="cart-count" data-cart-count>{{ cart.item_count }}</span></a>
+    </div>
+  </div>
+  <div id="MobileMenu" class="mobile-menu" hidden data-mobile-menu>
+    <div class="mobile-menu-inner">
+      {% assign mobile_menu = section.settings.menu %}
+      {% if mobile_menu == blank %}{% assign mobile_menu = linklists.main-menu %}{% endif %}
+      {% for link in mobile_menu.links %}
+        <details>
+          <summary>{{ link.title }} <span>+</span></summary>
+          <div class="mobile-submenu">
+            <a href="{{ link.url }}">Shop all</a>
+            {% for child in link.links %}<a href="{{ child.url }}">{{ child.title }}</a>{% for grand in child.links %}<a class="indent" href="{{ grand.url }}">{{ grand.title }}</a>{% endfor %}{% endfor %}
+          </div>
+        </details>
+      {% endfor %}
+      {% if shop.customer_accounts_enabled %}<a class="mobile-account" href="{{ routes.account_url }}">Account</a>{% endif %}
+    </div>
+  </div>
+</header>
+{% schema %}
+{"name":"Header","settings":[{"type":"link_list","id":"menu","label":"Main menu","default":"main-menu"},{"type":"select","id":"menu_style","label":"Desktop menu style","options":[{"value":"mega","label":"Mega menu"},{"value":"normal","label":"Normal menu"}],"default":"mega"},{"type":"image_picker","id":"mega_image","label":"Mega menu feature image"},{"type":"text","id":"mega_alt","label":"Mega image alt text"},{"type":"text","id":"mega_text","label":"Mega feature text","default":"Explore Kapisa"},{"type":"url","id":"mega_link","label":"Mega feature link"}],"blocks":[{"type":"collection_feature","name":"Collection feature","settings":[{"type":"collection","id":"collection","label":"Collection"},{"type":"image_picker","id":"image","label":"Feature image"},{"type":"text","id":"title","label":"Feature title"}]}],"max_blocks":6,"presets":[{"name":"Header"}]}
+{% endschema %}

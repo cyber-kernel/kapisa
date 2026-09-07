@@ -1,0 +1,73 @@
+<section class="section shoppable-video-gallery" style="--video-bg: {{ section.settings.background_color }}; --video-text: {{ section.settings.text_color }};">
+    <div class="page-width">
+      <div class="section-heading split-heading">
+        <div>
+          {% if section.settings.eyebrow != blank %}<p class="eyebrow">{{ section.settings.eyebrow }}</p>{% endif %}
+          <h2>{{ section.settings.heading }}</h2>
+        </div>
+        <div class="video-gallery-controls">
+          <button type="button" class="video-gallery-arrow" aria-label="Previous video" data-video-prev>←</button>
+          <button type="button" class="video-gallery-arrow" aria-label="Next video" data-video-next>→</button>
+        </div>
+      </div>
+      {% if section.blocks.size > 0 %}
+      <div class="video-gallery-track" data-video-track>
+        {% for block in section.blocks %}
+          {% assign video_product = block.settings.product %}
+          {% assign video_variant = video_product.selected_or_first_available_variant %}
+          <button type="button" class="shoppable-video-card" {{ block.shopify_attributes }}
+            data-video-card
+            data-video-title="{{ video_product.title | escape }}"
+            data-video-price="{{ video_variant.price | money | escape }}"
+            data-video-url="{{ video_product.url }}"
+            data-video-image="{% if video_product.featured_image %}{{ video_product.featured_image | image_url: width: 900 }}{% endif %}"
+            data-video-variant="{{ video_variant.id }}"
+            data-video-available="{{ video_variant.available }}"
+            data-video-variants="{{ video_product.variants | json | escape }}"
+            data-video-images="{{ video_product.images | map: 'src' | json | escape }}">
+            <span class="shoppable-video-media">
+              {% if block.settings.poster != blank %}
+                {{ block.settings.poster | image_url: width: 900 | image_tag: loading: 'lazy', widths: '300,600,900', alt: block.settings.title | escape }}
+              {% elsif video_product.featured_image != blank %}
+                {{ video_product.featured_image | image_url: width: 900 | image_tag: loading: 'lazy', widths: '300,600,900', alt: video_product.title | escape }}
+              {% endif %}
+              {% if block.settings.video != blank %}
+                {{ block.settings.video | video_tag: autoplay: true, loop: true, muted: true, controls: false, playsinline: true, image_size: '900x' }}
+              {% elsif block.settings.video_url != blank %}
+                <video src="{{ block.settings.video_url }}" autoplay muted loop playsinline preload="metadata"></video>
+              {% endif %}
+            </span>
+            <span class="shoppable-video-meta">
+              <strong>{{ block.settings.title | default: video_product.title }}</strong>
+              {% if video_product != blank %}<small>{{ video_product.title }} · {{ video_variant.price | money }}</small>{% endif %}
+            </span>
+          </button>
+        {% endfor %}
+      </div>
+      {% else %}
+        <div class="video-gallery-empty">Add a "Video + product" block in the Theme Customizer to start building your shoppable video gallery.</div>
+      {% endif %}
+    </div>
+    <div class="video-modal" data-video-modal aria-hidden="true">
+      <button type="button" class="video-modal-backdrop" data-video-close aria-label="Close video"></button>
+      <div class="video-modal-dialog" role="dialog" aria-modal="true" aria-label="Shop this look">
+        <button type="button" class="video-modal-close" data-video-close aria-label="Close">×</button>
+        <button type="button" class="video-modal-nav video-modal-nav--prev" data-video-modal-prev aria-label="Previous video">←</button>
+        <div class="video-modal-player"><video data-modal-video controls playsinline></video><button type="button" class="video-sound-toggle" data-video-sound aria-label="Toggle sound">Mute</button></div>
+        <div class="video-modal-product">
+          <p class="eyebrow">Featured in this look</p>
+          <div class="video-modal-product-image"><img data-modal-image alt=""></div>
+          <h3 data-modal-title></h3>
+          <p class="video-modal-price" data-modal-price></p>
+          <a class="video-modal-link" data-modal-link href="#">View details</a>
+          <select class="video-modal-variant" data-modal-variant aria-label="Choose a variant"></select>
+          <button type="button" class="button video-modal-add" data-video-add>Add to cart</button>
+          <p class="video-modal-message" data-video-message role="status"></p>
+        </div>
+        <button type="button" class="video-modal-nav video-modal-nav--next" data-video-modal-next aria-label="Next video">→</button>
+      </div>
+    </div>
+</section>
+{% schema %}
+{"name":"Shoppable video gallery","settings":[{"type":"text","id":"eyebrow","label":"Eyebrow","default":"KAPISA IN MOTION"},{"type":"text","id":"heading","label":"Heading","default":"See it in your shift."},{"type":"color","id":"text_color","label":"Text color","default":"#171A18"},{"type":"color","id":"background_color","label":"Background color","default":"#E9ECE8"}],"blocks":[{"type":"video","name":"Video + product","settings":[{"type":"video","id":"video","label":"Shopify video file"},{"type":"url","id":"video_url","label":"MP4 video URL"},{"type":"image_picker","id":"poster","label":"Poster / thumbnail"},{"type":"product","id":"product","label":"Featured product"},{"type":"text","id":"title","label":"Video title","default":"Made for the long shift"}]}],"max_blocks":12,"presets":[{"name":"Shoppable video gallery"}]}
+{% endschema %}

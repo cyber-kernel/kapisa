@@ -1,0 +1,14 @@
+<section class="section page-width">
+  <div class="section-heading text-center"><p class="eyebrow">{{ section.settings.eyebrow }}</p><h2>{{ section.settings.heading }}</h2></div>
+  <div class="color-grid color-grid--{{ section.blocks.size }}">
+    {% for block in section.blocks %}
+      <a class="color-card" href="{{ block.settings.link }}" {{ block.shopify_attributes }}>
+        {% if block.settings.image != blank %}{{ block.settings.image | image_url: width:1000 | image_tag: widths:'400,700,1000', sizes:'(min-width:990px) 25vw, 50vw', loading:'lazy', alt:block.settings.image.alt | default:block.settings.title }}{% else %}<div class="color-swatch-large" style="--swatch:{{ block.settings.color }}"></div>{% endif %}
+        <div class="color-card-copy"><h3>{{ block.settings.title }}</h3>{% if block.settings.description != blank %}<p>{{ block.settings.description }}</p>{% endif %}<span>Explore {% render 'icon', name:'arrow' %}</span></div>
+      </a>
+    {% endfor %}
+  </div>
+</section>
+{% schema %}
+{"name":"Color story","settings":[{"type":"text","id":"eyebrow","label":"Eyebrow","default":"A COLOR FOR EVERY SHIFT"},{"type":"text","id":"heading","label":"Heading","default":"Find your shade."}],"blocks":[{"type":"color","name":"Color","settings":[{"type":"image_picker","id":"image","label":"Image"},{"type":"color","id":"color","label":"Fallback color","default":"#1E2730"},{"type":"text","id":"title","label":"Title","default":"Midnight Navy"},{"type":"text","id":"description","label":"Description"},{"type":"url","id":"link","label":"Link"}]}],"max_blocks":6,"presets":[{"name":"Color story","blocks":[{"type":"color","settings":{"title":"Midnight Navy","color":"#1E2730"}},{"type":"color","settings":{"title":"Deep Wine","color":"#5B2731"}},{"type":"color","settings":{"title":"Desert Sand","color":"#C7B69E"}},{"type":"color","settings":{"title":"Baby Pink","color":"#E9BFC9"}}]}]}
+{% endschema %}

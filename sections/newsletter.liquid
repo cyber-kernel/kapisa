@@ -1,0 +1,11 @@
+<section class="newsletter-section">
+  <div class="page-width"><div class="newsletter-box{% if section.settings.image != blank %} has-image{% endif %}">
+    {% if section.settings.image != blank %}<div class="newsletter-image">{{ section.settings.image | image_url: width:1200 | image_tag: widths:'500,800,1200', loading:'lazy', alt:section.settings.image.alt }}</div>{% endif %}
+    <div class="newsletter-copy"><p class="eyebrow">{{ section.settings.eyebrow }}</p><h2>{{ section.settings.heading }}</h2><div class="rte">{{ section.settings.text }}</div>
+      {% form 'customer', class:'newsletter-form' %}<input type="hidden" name="contact[tags]" value="newsletter"><label class="visually-hidden" for="NewsletterEmail-{{ section.id }}">Email address</label><div class="newsletter-input"><input id="NewsletterEmail-{{ section.id }}" type="email" name="contact[email]" value="{{ form.email }}" placeholder="Email address" required autocomplete="email"><button type="submit">{{ section.settings.button_label }}</button></div>{% if form.errors %}<div class="form-message form-error">{{ form.errors | default_errors }}</div>{% endif %}{% if form.posted_successfully? %}<div class="form-message">Thanks for joining Kapisa.</div>{% endif %}{% endform %}
+    </div>
+  </div></div>
+</section>
+{% schema %}
+{"name":"Newsletter","settings":[{"type":"text","id":"eyebrow","label":"Eyebrow","default":"STAY IN THE LOOP"},{"type":"text","id":"heading","label":"Heading","default":"New drops. Better shifts."},{"type":"richtext","id":"text","label":"Text","default":"<p>Join the Kapisa community for new releases, stories and thoughtful updates.</p>"},{"type":"text","id":"button_label","label":"Button","default":"Join"},{"type":"image_picker","id":"image","label":"Image"}],"presets":[{"name":"Newsletter"}]}
+{% endschema %}

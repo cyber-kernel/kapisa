@@ -1,0 +1,1 @@
+{% if url != blank %}<a class="button{% if style == 'secondary' %} button--secondary{% endif %}" href="{{ url }}"{% if new_tab %} target="_blank" rel="noopener"{% endif %}>{{ label }}{% if arrow %}<span class="button-arrow">{% render 'icon', name:'arrow' %}</span>{% endif %}</a>{% endif %}
