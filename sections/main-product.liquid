@@ -11,7 +11,8 @@
           {% if product.media.size > 1 %}
             <div class="product-thumbnails" aria-label="Product gallery">
               {% for media in product.media %}
-                <button type="button" class="product-thumbnail{% if forloop.first %} is-active{% endif %}" data-gallery-thumb="{{ media.id }}" aria-label="View image {{ forloop.index }}">
+                {% assign media_variant_ids = media.variants | map: 'id' | join: ',' %}
+                <button type="button" class="product-thumbnail{% if forloop.first %} is-active{% endif %}" data-gallery-thumb="{{ media.id }}" data-media-variant-ids="{{ media_variant_ids }}" aria-label="View image {{ forloop.index }}">
                   {{ media.preview_image | image_url: width: 220 | image_tag: widths: '110,220', loading: 'lazy', alt: media.alt | default: product.title }}
                 </button>
               {% endfor %}
@@ -19,7 +20,8 @@
           {% endif %}
           <div class="product-media-grid">
             {% for media in product.media %}
-              <div class="product-media" data-gallery-media="{{ media.id }}">
+              {% assign media_variant_ids = media.variants | map: 'id' | join: ',' %}
+              <div class="product-media" data-gallery-media="{{ media.id }}" data-media-variant-ids="{{ media_variant_ids }}">
                 {% case media.media_type %}
                   {% when 'image' %}{{ media | image_url: width: 1600 | image_tag: widths: '600,900,1200,1600', sizes: '(min-width: 990px) 55vw, 100vw', loading: 'eager', alt: media.alt | default: product.title }}
                   {% when 'video' %}{{ media | video_tag: controls: true, playsinline: true, preload: 'metadata' }}
@@ -43,19 +45,25 @@
         {% if section.settings.show_rating %}
           <div class="product-rating" aria-label="{{ section.settings.rating }} out of 5 stars"><span>★★★★★</span><strong>{{ section.settings.rating }}</strong>{% if section.settings.review_label != blank %}<a href="#ProductReviews">({{ section.settings.review_label }})</a>{% endif %}</div>
         {% endif %}
+        <div class="product-meta-pills" aria-label="Product care essentials">
+          <span>4-way stretch</span>
+          <span>Medical grade</span>
+          <span>Easy care</span>
+        </div>
         <div class="product-info-price">{% render 'price', product: product %}<span class="product-tax-note">{{ section.settings.tax_note }}</span></div>
         {% if section.settings.emi_text != blank %}<div class="product-emi">{{ section.settings.emi_text }}</div>{% endif %}
         {% if section.settings.show_description %}<div class="product-description rte">{{ product.description }}</div>{% endif %}
         {% form 'product', product, id: 'product-form', class: 'product-form', novalidate: true %}
           {% unless product.has_only_default_variant %}
             {% for option in product.options_with_values %}
+              {% assign option_name = option.name | downcase %}
               <fieldset class="product-option">
-                <legend>{{ option.name }}: <strong>{{ option.selected_value }}</strong>{% if section.settings.size_guide != blank and option.name contains 'Size' %}<a href="#SizeGuide">{{ section.settings.size_guide_label }}</a>{% endif %}</legend>
+                <legend>{{ option.name }}: <strong data-selected-option="{{ option.name | handleize }}">{{ option.selected_value }}</strong>{% if section.settings.size_guide != blank and option_name contains 'size' %}<a href="#SizeGuide">{{ section.settings.size_guide_label }}</a>{% endif %}</legend>
                 <div class="variant-values">
                   {% for value in option.values %}
-                    <label class="variant-value{% if option.name contains 'Color' or option.name contains 'Colour' %} variant-value--color{% endif %}">
+                    <label class="variant-value{% if option_name contains 'color' or option_name contains 'colour' %} variant-value--color{% endif %}">
                       <input type="radio" name="options[{{ option.name | escape }}]" value="{{ value | escape }}" {% if option.selected_value == value %}checked{% endif %}>
-                      <span{% if option.name contains 'Color' or option.name contains 'Colour' %} class="color-swatch color-swatch--{{ value | handleize }}"{% endif %} title="{{ value }}">{{ value }}</span>
+                      <span{% if option_name contains 'color' or option_name contains 'colour' %} class="color-swatch color-swatch--{{ value | handleize }}"{% endif %} title="{{ value }}">{{ value }}</span>
                     </label>
                   {% endfor %}
                 </div>

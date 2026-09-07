@@ -15,7 +15,9 @@
     {% render 'price', product:p %}
     {% if show_swatches and p.options_with_values != blank %}
       {% assign color_index = -1 %}{% for option in p.options_with_values %}{% assign down = option.name | downcase %}{% if down == 'color' or down == 'colour' %}{% assign color_index = forloop.index0 %}{% endif %}{% endfor %}
-      {% if color_index > -1 %}<div class="swatches" aria-label="Available colors">{% for value in p.options_with_values[color_index].values limit:8 %}<span class="swatch" title="{{ value }}" data-color="{{ value | handleize }}"></span>{% endfor %}</div>{% endif %}
+      {% if color_index > -1 %}<div class="swatches" aria-label="Available colors">{% for value in p.options_with_values[color_index].values limit:8 %}<span class="swatch swatch--{{ value | handleize }}" title="{{ value }}" data-color="{{ value | handleize }}"></span>{% endfor %}</div>{% elsif p.metafields.custom.color_swatch != blank %}<div class="swatches" aria-label="Color"><span class="swatch" title="{{ p.metafields.custom.color_name | default: p.title }}" style="background: {{ p.metafields.custom.color_swatch }};"></span></div>{% endif %}
+    {% elsif p.metafields.custom.color_swatch != blank %}
+      <div class="swatches" aria-label="Color"><span class="swatch" title="{{ p.metafields.custom.color_name | default: p.title }}" style="background: {{ p.metafields.custom.color_swatch }};"></span></div>
     {% endif %}
   </div>
 </article>

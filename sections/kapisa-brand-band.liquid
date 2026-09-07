@@ -1,0 +1,51 @@
+<section class="section kapisa-brand-band" style="--band-bg: {{ section.settings.background_color }}; --band-text: {{ section.settings.text_color }};">
+  <div class="page-width">
+    <div class="section-heading text-center">
+      {% if section.settings.eyebrow != blank %}<p class="eyebrow">{{ section.settings.eyebrow }}</p>{% endif %}
+      {% if section.settings.heading != blank %}<h2>{{ section.settings.heading }}</h2>{% endif %}
+      {% if section.settings.subheading != blank %}<p class="section-intro">{{ section.settings.subheading }}</p>{% endif %}
+    </div>
+    <div class="brand-band-grid">
+      {% for block in section.blocks %}
+        <div class="brand-band-card" {{ block.shopify_attributes }}>
+          {% if block.settings.image != blank %}
+            <div class="brand-band-image">
+              {{ block.settings.image | image_url: width: 800 | image_tag: loading: 'lazy', widths: '300,600,800', sizes: '(min-width: 990px) 22vw, 45vw', alt: block.settings.title | default: block.settings.text }}
+            </div>
+          {% endif %}
+          <div class="brand-band-copy">
+            {% if block.settings.kicker != blank %}<span>{{ block.settings.kicker }}</span>{% endif %}
+            {% if block.settings.title != blank %}<h3>{{ block.settings.title }}</h3>{% endif %}
+            {% if block.settings.text != blank %}<p>{{ block.settings.text }}</p>{% endif %}
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% schema %}
+{
+  "name": "Kapisa brand band",
+  "settings": [
+    {"type": "text", "id": "eyebrow", "label": "Eyebrow", "default": "WHY KAPISA"},
+    {"type": "text", "id": "heading", "label": "Heading", "default": "Built for the workday, not the shortcut."},
+    {"type": "text", "id": "subheading", "label": "Subheading", "default": "Thoughtful design that moves with you from early rounds to late nights."},
+    {"type": "color", "id": "background_color", "label": "Background color", "default": "#F7F4EE"},
+    {"type": "color", "id": "text_color", "label": "Text color", "default": "#102538"}
+  ],
+  "blocks": [
+    {
+      "type": "feature",
+      "name": "Feature card",
+      "settings": [
+        {"type": "text", "id": "kicker", "label": "Kicker", "default": "Comfort"},
+        {"type": "text", "id": "title", "label": "Title", "default": "Built for long shifts"},
+        {"type": "textarea", "id": "text", "label": "Text", "default": "Soft-touch stretch fabric that feels polished from the first patient to the last chart."},
+        {"type": "image_picker", "id": "image", "label": "Image"}
+      ]
+    }
+  ],
+  "max_blocks": 4,
+  "presets": [{"name": "Kapisa brand band", "blocks": [{"type": "feature"}, {"type": "feature"}, {"type": "feature"}, {"type": "feature"}]}]
+}
+{% endschema %}
