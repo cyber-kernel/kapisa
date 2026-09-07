@@ -23,6 +23,7 @@
             data-video-image="{% if video_product.featured_image %}{{ video_product.featured_image | image_url: width: 900 }}{% endif %}"
             data-video-variant="{{ video_variant.id }}"
             data-video-available="{{ video_variant.available }}"
+            data-video-src="{% if block.settings.video != blank and block.settings.video.sources.size > 0 %}{{ block.settings.video.sources[0].url }}{% elsif block.settings.video_url != blank %}{{ block.settings.video_url }}{% endif %}"
             data-video-variants="{{ video_product.variants | json | escape }}"
             data-video-images="{{ video_product.images | map: 'src' | json | escape }}">
             <span class="shoppable-video-media">

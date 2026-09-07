@@ -18,13 +18,13 @@
   {
     "name":"Colors",
     "settings":[
-      {"type":"color","id":"color_background","label":"Background","default":"#F8F7F4"},
-      {"type":"color","id":"color_surface","label":"Surface","default":"#FFFFFF"},
-      {"type":"color","id":"color_text","label":"Text","default":"#171A18"},
-      {"type":"color","id":"color_muted","label":"Muted text","default":"#686C68"},
-      {"type":"color","id":"color_accent","label":"Accent","default":"#6E746A"},
-      {"type":"color","id":"color_border","label":"Borders","default":"#E4E3DE"},
-      {"type":"color","id":"color_button","label":"Button","default":"#171A18"},
+      {"type":"color","id":"color_background","label":"Background","default":"#F5F2EB"},
+      {"type":"color","id":"color_surface","label":"Surface","default":"#FFFCF6"},
+      {"type":"color","id":"color_text","label":"Text","default":"#102538"},
+      {"type":"color","id":"color_muted","label":"Muted text","default":"#66727A"},
+      {"type":"color","id":"color_accent","label":"Accent","default":"#B99154"},
+      {"type":"color","id":"color_border","label":"Borders","default":"#D9D7CE"},
+      {"type":"color","id":"color_button","label":"Button","default":"#102538"},
       {"type":"color","id":"color_button_text","label":"Button text","default":"#FFFFFF"}
     ]
   },

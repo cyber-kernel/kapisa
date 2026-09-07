@@ -1,30 +1,98 @@
-<section class="section page-width product-page">
-  <div class="product-gallery">
-    <div class="product-media-grid">{% for media in product.media %}<div class="product-media">{% case media.media_type %}{% when 'image' %}{{ media | image_url: width:1600 | image_tag: widths:'600,900,1200,1600', sizes:'(min-width:990px) 50vw, 100vw', loading:'lazy', alt:media.alt | default:product.title }}{% when 'video' %}{{ media | video_tag: controls:true, playsinline:true }}{% when 'external_video' %}{{ media | external_video_tag }}{% endcase %}</div>{% endfor %}</div>
-  </div>
-  <div class="product-info">
-    {% if section.settings.show_vendor %}<p class="eyebrow">{{ product.vendor }}</p>{% endif %}
-    <h1>{{ product.title }}</h1>
-    <div class="product-info-price">{% render 'price', product:product %}</div>
-    {% if section.settings.show_description %}<div class="product-description rte">{{ product.description }}</div>{% endif %}
-    {% form 'product', product, id: 'product-form', class: 'product-form', novalidate: true %}
-      {% unless product.has_only_default_variant %}
-        {% for option in product.options_with_values %}
-          <fieldset class="product-option"><legend>{{ option.name }}</legend><div class="variant-values">{% for value in option.values %}<label><input type="radio" name="options[{{ option.name | escape }}]" value="{{ value | escape }}" {% if option.selected_value == value %}checked{% endif %}><span>{{ value }}</span></label>{% endfor %}</div></fieldset>
-        {% endfor %}
-      {% endunless %}
-      <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}"><script type="application/json" data-variant-json>{{ product.variants | json }}</script>
-      <label class="quantity-label" for="Quantity-{{ section.id }}">Quantity</label><div class="quantity"><button type="button" data-qty-minus>−</button><input id="Quantity-{{ section.id }}" name="quantity" type="number" value="1" min="1"><button type="button" data-qty-plus>+</button></div>
-      <button type="submit" name="add" class="button product-submit" {% unless product.selected_or_first_available_variant.available %}disabled{% endunless %}>{% if product.selected_or_first_available_variant.available %}Add to cart{% else %}Sold out{% endif %}</button>
-      {{ form | payment_button }}
-      <div class="product-form-message" data-product-form-message></div>
-    {% endform %}
-    <div class="accordion-list">
-      {% if section.settings.shipping_text != blank %}<details><summary>Shipping & returns</summary><div class="rte">{{ section.settings.shipping_text }}</div></details>{% endif %}
-      {% if section.settings.care_text != blank %}<details><summary>Care</summary><div class="rte">{{ section.settings.care_text }}</div></details>{% endif %}
+<section class="product-page-shell">
+  <div class="page-width">
+    <nav class="product-breadcrumbs" aria-label="Breadcrumb">
+      <a href="{{ routes.root_url }}">Home</a><span>/</span>
+      {% if collection %}<a href="{{ collection.url }}">{{ collection.title }}</a><span>/</span>{% endif %}
+      <strong>{{ product.title }}</strong>
+    </nav>
+    <div class="product-page">
+      <div class="product-gallery">
+        <div class="product-gallery-layout">
+          {% if product.media.size > 1 %}
+            <div class="product-thumbnails" aria-label="Product gallery">
+              {% for media in product.media %}
+                <button type="button" class="product-thumbnail{% if forloop.first %} is-active{% endif %}" data-gallery-thumb="{{ media.id }}" aria-label="View image {{ forloop.index }}">
+                  {{ media.preview_image | image_url: width: 220 | image_tag: widths: '110,220', loading: 'lazy', alt: media.alt | default: product.title }}
+                </button>
+              {% endfor %}
+            </div>
+          {% endif %}
+          <div class="product-media-grid">
+            {% for media in product.media %}
+              <div class="product-media" data-gallery-media="{{ media.id }}">
+                {% case media.media_type %}
+                  {% when 'image' %}{{ media | image_url: width: 1600 | image_tag: widths: '600,900,1200,1600', sizes: '(min-width: 990px) 55vw, 100vw', loading: 'eager', alt: media.alt | default: product.title }}
+                  {% when 'video' %}{{ media | video_tag: controls: true, playsinline: true, preload: 'metadata' }}
+                  {% when 'external_video' %}{{ media | external_video_tag }}
+                  {% when 'model' %}{{ media | model_viewer_tag }}
+                {% endcase %}
+              </div>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+      <div class="product-info">
+        <div class="product-info-topline">
+          {% if section.settings.show_vendor and product.vendor != blank %}<p class="eyebrow">{{ product.vendor }}</p>{% endif %}
+          {% if section.settings.badge != blank %}<span class="product-detail-badge">{{ section.settings.badge }}</span>{% endif %}
+        </div>
+        <div class="product-title-row">
+          <h1>{{ product.title }}</h1>
+          <button type="button" class="product-share" data-product-share aria-label="Share product">↗</button>
+        </div>
+        {% if section.settings.show_rating %}
+          <div class="product-rating" aria-label="{{ section.settings.rating }} out of 5 stars"><span>★★★★★</span><strong>{{ section.settings.rating }}</strong>{% if section.settings.review_label != blank %}<a href="#ProductReviews">({{ section.settings.review_label }})</a>{% endif %}</div>
+        {% endif %}
+        <div class="product-info-price">{% render 'price', product: product %}<span class="product-tax-note">{{ section.settings.tax_note }}</span></div>
+        {% if section.settings.emi_text != blank %}<div class="product-emi">{{ section.settings.emi_text }}</div>{% endif %}
+        {% if section.settings.show_description %}<div class="product-description rte">{{ product.description }}</div>{% endif %}
+        {% form 'product', product, id: 'product-form', class: 'product-form', novalidate: true %}
+          {% unless product.has_only_default_variant %}
+            {% for option in product.options_with_values %}
+              <fieldset class="product-option">
+                <legend>{{ option.name }}: <strong>{{ option.selected_value }}</strong>{% if section.settings.size_guide != blank and option.name contains 'Size' %}<a href="#SizeGuide">{{ section.settings.size_guide_label }}</a>{% endif %}</legend>
+                <div class="variant-values">
+                  {% for value in option.values %}
+                    <label class="variant-value{% if option.name contains 'Color' or option.name contains 'Colour' %} variant-value--color{% endif %}">
+                      <input type="radio" name="options[{{ option.name | escape }}]" value="{{ value | escape }}" {% if option.selected_value == value %}checked{% endif %}>
+                      <span{% if option.name contains 'Color' or option.name contains 'Colour' %} class="color-swatch color-swatch--{{ value | handleize }}"{% endif %} title="{{ value }}">{{ value }}</span>
+                    </label>
+                  {% endfor %}
+                </div>
+              </fieldset>
+            {% endfor %}
+          {% endunless %}
+          <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}">
+          <script type="application/json" data-variant-json>{{ product.variants | json }}</script>
+          <label class="quantity-label" for="Quantity-{{ section.id }}">Quantity</label>
+          <div class="quantity"><button type="button" data-qty-minus aria-label="Decrease quantity">−</button><input id="Quantity-{{ section.id }}" name="quantity" type="number" value="1" min="1"><button type="button" data-qty-plus aria-label="Increase quantity">+</button></div>
+          <button type="submit" name="add" class="button product-submit" {% unless product.selected_or_first_available_variant.available %}disabled{% endunless %}>{% if product.selected_or_first_available_variant.available %}Add to bag{% else %}Sold out{% endif %}</button>
+          {{ form | payment_button }}
+          <div class="product-form-message" data-product-form-message></div>
+        {% endform %}
+        <div class="product-promises">
+          {% if section.settings.promise_one != blank %}<span>✓ {{ section.settings.promise_one }}</span>{% endif %}
+          {% if section.settings.promise_two != blank %}<span>✓ {{ section.settings.promise_two }}</span>{% endif %}
+          {% if section.settings.promise_three != blank %}<span>✓ {{ section.settings.promise_three }}</span>{% endif %}
+        </div>
+        <div class="accordion-list" id="SizeGuide">
+          {% if section.settings.shipping_text != blank %}<details open><summary>Shipping & returns</summary><div class="rte">{{ section.settings.shipping_text }}</div></details>{% endif %}
+          {% if section.settings.care_text != blank %}<details><summary>Care & fabric</summary><div class="rte">{{ section.settings.care_text }}</div></details>{% endif %}
+          {% if section.settings.size_guide != blank %}<details><summary>{{ section.settings.size_guide_label }}</summary><div class="rte">{{ section.settings.size_guide }}</div></details>{% endif %}
+        </div>
+      </div>
     </div>
   </div>
 </section>
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    var share = document.querySelector('[data-product-share]');
+    if (share) share.addEventListener('click', function () {
+      if (navigator.share) navigator.share({ title: document.title, url: window.location.href });
+      else if (navigator.clipboard) navigator.clipboard.writeText(window.location.href).then(function () { share.textContent = '✓'; });
+    });
+  });
+</script>
 {% schema %}
-{"name":"Main product","settings":[{"type":"checkbox","id":"show_vendor","label":"Show vendor","default":false},{"type":"checkbox","id":"show_description","label":"Show description","default":true},{"type":"richtext","id":"shipping_text","label":"Shipping text","default":"<p>Add your current shipping and return information here.</p>"},{"type":"richtext","id":"care_text","label":"Care text","default":"<p>Add your product care instructions here.</p>"}],"presets":[{"name":"Main product"}]}
+{"name":"Main product","settings":[{"type":"checkbox","id":"show_vendor","label":"Show vendor","default":false},{"type":"checkbox","id":"show_rating","label":"Show rating","default":true},{"type":"text","id":"rating","label":"Rating","default":"4.9"},{"type":"text","id":"review_label","label":"Review label","default":"Reviews"},{"type":"text","id":"badge","label":"Product badge","default":"Best seller"},{"type":"checkbox","id":"show_description","label":"Show description","default":true},{"type":"text","id":"tax_note","label":"Tax note","default":"Inclusive of all taxes"},{"type":"text","id":"emi_text","label":"Payment / EMI message","default":"Easy payments available at checkout"},{"type":"text","id":"promise_one","label":"Promise one","default":"Free shipping over ₹1,999"},{"type":"text","id":"promise_two","label":"Promise two","default":"Easy 7-day returns"},{"type":"text","id":"promise_three","label":"Promise three","default":"Secure checkout"},{"type":"text","id":"size_guide_label","label":"Size guide label","default":"Size guide"},{"type":"richtext","id":"size_guide","label":"Size guide content"},{"type":"richtext","id":"shipping_text","label":"Shipping and returns","default":"<p>Dispatches in 1–2 business days. Easy returns within 7 days.</p>"},{"type":"richtext","id":"care_text","label":"Care and fabric","default":"<p>Machine wash cold with similar colors. Do not bleach.</p>"}],"presets":[{"name":"Main product"}]}
 {% endschema %}

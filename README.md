@@ -1,6 +1,6 @@
 # KAPISA Shopify Theme
 
-Kapisa is a native Shopify Online Store 2.0 theme built around the same principles that make Shopify Dawn a strong foundation: semantic HTML, CSS-first presentation, JavaScript only where needed, section-based customization, responsive imagery, and Shopify-native commerce primitives.
+Kapisa is a native Shopify Online Store 2.0 theme built around the same principles that make Shopify Dawn a strong foundation: semantic HTML, CSS-first presentation, JavaScript only where needed, section-based customization, responsive imagery, and Shopify-native commerce primitives. The visual system uses Kapisa's healthcare identity: deep navy, warm gold accents, and soft cream surfaces rather than a generic purple palette.
 
 ## Upload
 1. Shopify Admin → Online Store → Themes.
@@ -34,6 +34,8 @@ Replace placeholder imagery/copy and add your actual shipping, returns, product-
 Use Shopify CLI and Theme Check before production. Dawn's official repository recommends Theme Check and performance/Lighthouse validation.
 
 ## Shopify CLI from the VS Code terminal
+
+For a copy-paste handoff, see [SHOPIFY-CLI-GUIDE.md](./SHOPIFY-CLI-GUIDE.md).
 
 Install Node.js LTS first, then open the theme folder in VS Code. Authenticate once:
 

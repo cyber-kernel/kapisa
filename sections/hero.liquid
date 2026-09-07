@@ -3,7 +3,7 @@
     {% if section.settings.video != blank %}
       {{ section.settings.video | video_tag: autoplay:section.settings.autoplay, loop:section.settings.loop, muted:true, controls:section.settings.controls, playsinline:true, image_size:'2000x', class:'hero-video' }}
     {% elsif section.settings.image != blank %}
-      <picture>{% if section.settings.mobile_image != blank %}<source media="(max-width: 749px)" srcset="{{ section.settings.mobile_image | image_url: width:1200 }}">{% endif %}{{ section.settings.image | image_url: width:2400 | image_tag: widths:'800,1200,1600,2000,2400', sizes:'100vw', loading:'eager', class:'hero-image', alt:section.settings.image.alt | escape }}</picture>
+      <picture>{% if section.settings.mobile_image != blank %}<source media="(max-width: 749px)" srcset="{{ section.settings.mobile_image | image_url: width:1200 }}">{% endif %}{{ section.settings.image | image_url: width:2400 | image_tag: widths:'800,1200,1600,2000,2400', sizes:'100vw', loading:'eager', fetchpriority:'high', class:'hero-image', alt:section.settings.image.alt | escape }}</picture>
     {% else %}<div class="hero-placeholder"></div>{% endif %}
     {% if section.settings.overlay %}<div class="hero-overlay"></div>{% endif %}
   </div>
